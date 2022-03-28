@@ -11,29 +11,21 @@ namespace ASPCoreWebAPI_Course.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
 
+        private readonly IWeatherForcastService _service;
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IWeatherForcastService service)
         {
             _logger = logger;
+            _service = service;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get([FromQuery]int numOfResults, [FromQuery]int minTemp, [FromQuery]int maxTemp)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, numOfResults).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(minTemp, maxTemp),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var result = _service.Get(numOfResults, minTemp, maxTemp);
+            return result;
         }
 
         [HttpPost]
@@ -41,7 +33,7 @@ namespace ASPCoreWebAPI_Course.Controllers
         public ActionResult Generator([FromQuery] int numOfResults, [FromBody] TemperatureRequest Temp)
         {
 
-            if(numOfResults>=0 & Temp.maxTemp > Temp.minTemp)
+            if(numOfResults>0 & Temp.maxTemp > Temp.minTemp)
             {
                 var res = Get(numOfResults, Temp.minTemp, Temp.maxTemp);
                 return Ok(res);
