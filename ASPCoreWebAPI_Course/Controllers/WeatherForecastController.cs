@@ -24,16 +24,36 @@ namespace ASPCoreWebAPI_Course.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> Get([FromQuery]int numOfResults, [FromQuery]int minTemp, [FromQuery]int maxTemp)
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Enumerable.Range(1, numOfResults).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
+                TemperatureC = rng.Next(minTemp, maxTemp),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
         }
+
+        [HttpPost]
+        [Route("generate")]
+        public ActionResult Generator([FromQuery] int numOfResults, [FromBody] TemperatureRequest Temp)
+        {
+
+            if(numOfResults>=0 & Temp.maxTemp > Temp.minTemp)
+            {
+                var res = Get(numOfResults, Temp.minTemp, Temp.maxTemp);
+                return Ok(res);
+
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+
+
+        }
+
     }
 }
