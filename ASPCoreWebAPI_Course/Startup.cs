@@ -1,3 +1,4 @@
+using ASPCoreWebAPI_Course.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,11 +28,15 @@ namespace ASPCoreWebAPI_Course
         {
             services.AddTransient<IWeatherForcastService,WeatherForcastService>();
             services.AddControllers();
+            services.AddDbContext<RestaurantDbContext>();
+            services.AddScoped<RestaurantSeeder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RestaurantSeeder seeder)
         {
+            seeder.Seed();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
