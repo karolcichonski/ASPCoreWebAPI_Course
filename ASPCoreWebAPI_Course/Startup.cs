@@ -1,4 +1,5 @@
 using ASPCoreWebAPI_Course.Entities;
+using ASPCoreWebAPI_Course.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,10 +27,12 @@ namespace ASPCoreWebAPI_Course
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IWeatherForcastService,WeatherForcastService>();
             services.AddControllers();
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
+            services.AddAutoMapper(this.GetType().Assembly);
+            services.AddScoped<IRestaurantService, RestaurantService>();
+                
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
