@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace ASPCoreWebAPI_Course.Controllers
 {
     [Route("api/restaurant")]
+    [ApiController]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -62,16 +63,20 @@ namespace ASPCoreWebAPI_Course.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var isDeleted = _restaurantService.Delete(id);
+             _restaurantService.Delete(id);
 
-            if (isDeleted)
-            {
                 return NoContent();
-            }
-            else
-            {
-                return NotFound();
-            }
+
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult update ([FromRoute] int id, [FromBody] UpdateRestaurantDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            
+            _restaurantService.Update(id, dto);
+
+                return NoContent();
         }
     }
 }
